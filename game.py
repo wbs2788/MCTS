@@ -1,7 +1,7 @@
 '''
 Author: wbs2788
 Date: 2021-10-19 00:33:35
-LastEditTime: 2021-10-19 00:49:45
+LastEditTime: 2021-10-19 10:16:15
 LastEditors: wbs2788
 Description: create game
 FilePath: \MCTS\game.py
@@ -47,4 +47,12 @@ class Board(object):
         w = movement % self.height
         return [h, w]
 
-    
+    def loc2move(self, loc):
+        if len(loc) != 2 :
+            return -1
+        if loc[0] >= self.height or loc[1] >= self.width:
+            return -1
+        else:
+            return loc[0] * self.width + loc[1] 
+
+    # def whoswinner(self, states):
