@@ -1,7 +1,7 @@
 '''
 Author: wbs2788
 Date: 2021-10-19 00:33:35
-LastEditTime: 2021-10-20 13:18:44
+LastEditTime: 2021-10-26 01:01:20
 LastEditors: wbs2788
 Description: create game
 FilePath: \MCTS\game.py
@@ -13,7 +13,7 @@ class Board(object):
 
     def __init__(self, **kwargs):
         self.width = int(kwargs.get('width', 8))
-        self.height = int(kwargs.get('width', 8))
+        self.height = int(kwargs.get('height', 8))
         self.states = {} # key: loc. val: player
         self.n_in_row = int(kwargs.get('n_in_row', 5))
         self.players = [1, 2]
