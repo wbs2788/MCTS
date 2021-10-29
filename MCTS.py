@@ -1,14 +1,16 @@
 '''
 Author: wbs2788
 Date: 2021-10-08 23:21:29
-LastEditTime: 2021-10-20 23:05:46
+LastEditTime: 2021-10-29 10:19:28
 LastEditors: wbs2788
 Description: MCTS algorithm with AlphaGo style(policy-value network)
 FilePath: \MCTS\MCTS.py
 '''
 
-import numpy as np
 import copy
+
+import numpy as np
+
 
 class Node(object):
     

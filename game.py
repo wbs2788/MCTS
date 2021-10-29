@@ -1,7 +1,7 @@
 '''
 Author: wbs2788
 Date: 2021-10-19 00:33:35
-LastEditTime: 2021-10-26 01:01:20
+LastEditTime: 2021-10-28 11:56:13
 LastEditors: wbs2788
 Description: create game
 FilePath: \MCTS\game.py
