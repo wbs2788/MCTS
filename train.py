@@ -1,7 +1,7 @@
 '''
 Author: wbs2788
 Date: 2021-10-27 23:23:43
-LastEditTime: 2021-10-29 10:02:19
+LastEditTime: 2021-10-29 23:56:17
 LastEditors: wbs2788
 Description: 
 FilePath: \MCTS\train.py
@@ -9,11 +9,15 @@ FilePath: \MCTS\train.py
 '''
 
 import random
-import numpy as np
 from collections import defaultdict, deque
+
+import numpy as np
+
 from game import Board, Game
 from MCTS import MCTSPlayer
 from policy_value_net import PolicyValueNet
+from pureMCTS import MCTSPlayer as PureMCTSPlayer
+
 
 class Train():
 
@@ -41,6 +45,8 @@ class Train():
         self.game_batch_num = 1500
         self.best_win_ratio = 0.0
 
+        self.pure_mcts_playout_num = 1000
+
         if init_model:
             self.policy_val_net = PolicyValueNet(self.board_width,
                                                  self.board_height,
@@ -51,7 +57,7 @@ class Train():
 
         self.mcts_player = MCTSPlayer(self.policy_val_net.policy_val_func,
                                       score=self.score,
-                                      plays=self.n_playout,
+                                      plays=self.n_play,
                                       is_selfplay=1)
 
     def get_equi_data(self, play_data):
@@ -119,12 +125,19 @@ class Train():
     def policy_evaluate(self, n_games=10):
         current_mcts_player = MCTSPlayer(self.policy_val_net.policy_val_func,
                                         score=self.score, plays=self.n_play)
+        pure_mcts_player = PureMCTSPlayer(score=5, 
+                                        n_playout=self.pure_mcts_playout_num)
         win_cnt = defaultdict(int)
         for i in range(n_games):
-            winner = self.game.start_play(current_mcts_player)
-            # !TODO: write pure MCTS
+            winner = self.game.start_play(current_mcts_player,
+                                            pure_mcts_player,
+                                            start_player=i % 2,
+                                            is_shown=0)
             win_cnt[winner] += 1
         win_ratio = 1.0*(win_cnt[1] + 0.5*win_cnt[-1]) / n_games
+        print("num_playouts:{}, win: {}, lose: {}, tie:{}".format(
+                self.pure_mcts_playout_num,
+                win_cnt[1], win_cnt[2], win_cnt[-1]))
         return win_ratio
 
     def run(self):

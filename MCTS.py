@@ -1,7 +1,7 @@
 '''
 Author: wbs2788
 Date: 2021-10-08 23:21:29
-LastEditTime: 2021-10-29 10:19:28
+LastEditTime: 2021-10-29 23:59:39
 LastEditors: wbs2788
 Description: MCTS algorithm with AlphaGo style(policy-value network)
 FilePath: \MCTS\MCTS.py
@@ -10,6 +10,8 @@ FilePath: \MCTS\MCTS.py
 import copy
 
 import numpy as np
+
+from game import Board
 
 
 class Node(object):
@@ -145,11 +147,11 @@ class MCTSPlayer(object):
     def reset_player(self):
         self.mcts.update_with_move(-1)
 
-    def get_action(self, board, eps=1e-3, return_prob=0):
-        sensible_moves = board.availables
-        move_probs = self.mcts.get_mov_probs(board, eps)
+    def get_action(self, board:Board, temp=1e-3, return_prob=0):
+        sensible_moves = board.available
+        move_probs = self.mcts.get_mov_probs(board, temp)
         if len(sensible_moves) > 0:
-            acts, probs = self.mcts.get_mov_probs(board, eps)
+            acts, probs = self.mcts.get_mov_probs(board, temp)
             move_probs[list(acts)] = probs
             if self._is_selfplay:
                 move = np.random.choice(acts, p=0.75*probs + 0.25*np.random.dirichlet(0.3*np.ones(len(probs))))

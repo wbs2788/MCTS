@@ -1,11 +1,11 @@
 '''
 Author: wbs2788
 Date: 2021-10-29 10:12:19
-LastEditTime: 2021-10-29 10:28:42
+LastEditTime: 2021-10-29 23:55:53
 LastEditors: wbs2788
 Description: file information
 '''
-from _typeshed import Self
+
 import game
 import copy
 from operator import itemgetter
@@ -22,7 +22,6 @@ def policy_value_func(board:game.Board):
 
 
 class Node(object):
-    # TODO: copy the currect node
     def __init__(self, parent, priP:float) -> None:
         """initialize MCT
 
@@ -91,10 +90,75 @@ class MCTS(object):
         self._score = score
         self._n_playout = n_playout
 
-    def _playout(self, state:Node):
+    def _playout(self, state:game.Board):
         node = self._root
         while True:
             if node.is_leaf():
                 break
             action, node = node.select(self._score)
-            state.move(action) # TODO: find state.
+            state.do_move(action)
+
+        action_probs, _ = self._policy(state)
+        end, winner = state.checkend()    
+
+        if not end:
+            node.expand(action_probs)
+
+        leaf_val = self._evaluate_rollout(state)
+        node.update(-leaf_val)
+
+    def _evaluate_rollout(self, state:game.Board, limit=1000):
+        player = state.get_cur_player()
+        for _ in range(limit):
+            end, winner = state.checkend()
+            if end:
+                break
+            action_probs = rollout_policy_func(state)
+            max_action = max(action_probs, key=itemgetter(1))[0]
+            state.do_move(max_action)
+        else:
+            print("WARNING: rollout reached move limit")
+        if winner == -1:
+            return 0
+        else:
+            return 1 if winner == player else -1
+
+    def get_move(self, state):
+        for _ in range(self._n_playout):
+            state_copy = copy.deepcopy(state)
+            self._playout(state_copy)
+        return max(self._root._children.items(),
+                    key=lambda act_node: act_node[1]._n_visits)[0]
+
+    def update_with_move(self, last_move):
+        if last_move in self._root._children:
+            self._root = self._root._children[last_move]
+            self._root._parent = None
+        else:
+            self._root = Node(None, 1.0)
+
+    def __str__(self):
+        return "MCTS"
+
+class MCTSPlayer(object):
+    def __init__(self, score=5, n_playout=2000) -> None:
+        super().__init__()
+        self.mcts = MCTS(policy_value_func, score, n_playout)
+
+    def set_player_ind(self, p):
+        self.player = p
+
+    def reset_player(self):
+        self.mcts.update_with_move(-1)
+
+    def get_action(self, board:game.Board):
+        sensible_moves = board.available
+        if len(sensible_moves) > 0:
+            move = self.mcts.get_move(board)
+            self.mcts.update_with_move(-1)
+            return move
+        else:
+            print("WARNING: the board is FULL!")
+
+    def __str__(self) -> str:
+        return "MCTS {}".format(self.player)

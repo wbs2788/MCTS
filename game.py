@@ -1,7 +1,7 @@
 '''
 Author: wbs2788
 Date: 2021-10-19 00:33:35
-LastEditTime: 2021-10-28 11:56:13
+LastEditTime: 2021-10-29 23:58:22
 LastEditors: wbs2788
 Description: create game
 FilePath: \MCTS\game.py
@@ -18,7 +18,7 @@ class Board(object):
         self.n_in_row = int(kwargs.get('n_in_row', 5))
         self.players = [1, 2]
 
-    def init_Board(self, start=0):
+    def init_board(self, start=0):
         """initial the board
 
         Args:

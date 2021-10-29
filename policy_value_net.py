@@ -1,7 +1,7 @@
 '''
 Author: wbs2788
 Date: 2021-10-26 00:42:01
-LastEditTime: 2021-10-27 23:15:28
+LastEditTime: 2021-10-30 00:02:16
 LastEditors: wbs2788
 Description: 
 FilePath: \MCTS\policy_value_net.py
